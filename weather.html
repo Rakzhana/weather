@@ -1,43 +1,86 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Document</title>
-        <style>
-            .flex{
-                display:flex;
-                justify-content: space-around;
-                width: 50%;
-                border:1px solid gray;
-                padding: 10px;
-            }
-            img{
-                width:100px;
-                height:100px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex">
-            <div>
-                <h1 id="name"></h1>
-                <h2 id="region"></h2>
-                <p id="temp"></p>
-                <p id="humidity"></p>
-            </div>
-            <img id="icon" src="" alt="weather icon"/>
-        </div>
-        <script>
-            fetch("https://api.weatherapi.com/v1/current.json?q=new_york&key=9ef5e7e0c3b046a6b1b92053260403")
-            .then(response=>response.json())
-            .then(data=>{
-                document.getElementById("icon").setAttribute("src",data.current.condition.icon)
-                document.getElementById("name").textContent=data.location.name
-                document.getElementById("region").textContent=data.location.region+", "+data.location.country
-                document.getElementById("temp").textContent="Temperature : "+data.current.temp_c
-                document.getElementById("humidity").textContent="Humidity : "+data.current.humidity
-                console.log(data)
-            })
-        </script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Grid</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f4f4f4;
+        }
+
+        .grid{
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+            gap:20px;
+            padding:20px;
+        }
+
+        .card{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            border:1px solid gray;
+            padding:15px;
+            background:white;
+            border-radius:10px;
+        }
+
+        img{
+            width:80px;
+            height:80px;
+        }
+
+        h2{
+            margin:0;
+        }
+
+        p{
+            margin:5px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1 style="text-align:center">Weather Dashboard</h1>
+
+<div class="grid" id="weatherGrid"></div>
+
+<script>
+
+const cities = ["Delhi","Chennai","Mumbai","Bangalore","Kolkata","Hyderabad"];
+
+const apiKey = "9ef5e7e0c3b046a6b1b92053260403";
+
+cities.forEach(city => {
+
+fetch(`https://api.weatherapi.com/v1/current.json?q=${city}&key=${apiKey}`)
+.then(response => response.json())
+.then(data => {
+
+const card = document.createElement("div");
+card.className = "card";
+
+card.innerHTML = `
+<div>
+<h2>${data.location.name}</h2>
+<p>${data.location.region}, ${data.location.country}</p>
+<p>Temperature : ${data.current.temp_c} °C</p>
+<p>Humidity : ${data.current.humidity}%</p>
+</div>
+
+<img src="${data.current.condition.icon}" alt="weather icon">
+`;
+
+document.getElementById("weatherGrid").appendChild(card);
+
+});
+
+});
+
+</script>
+
+</body>
 </html>
